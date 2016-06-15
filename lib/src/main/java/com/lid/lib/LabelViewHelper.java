@@ -6,6 +6,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -18,19 +22,27 @@ public class LabelViewHelper {
 
     private static final int DEFAULT_DISTANCE = 40;
     private static final int DEFAULT_HEIGHT = 20;
+    private static final String DEFAULT_TEXT_FONT = "ProximaNova-Bold.otf";
     private static final int DEFAULT_TEXT_SIZE = 14;
     private static final int DEFAULT_BACKGROUND_COLOR = 0x9F27CDC0;
     private static final int DEFAULT_TEXT_COLOR = 0xFFFFFFFF;
     private static final int DEFAULT_ORIENTATION = LEFT_TOP;
 
+    private static final float DEFAULT_HWEIGHT = 0.5f;
+    private static final float DEFAULT_VWEIGHT = 0.3f;
+
     private int distance;
     private int height;
     private String text;
+    private String textFont;
     private int backgroundColor;
     private int textSize;
     private int textColor;
     private boolean visual;
     private int orientation;
+
+    private float hWeight;
+    private float vWeight;
 
     private float startPosX;
     private float startPosY;
@@ -54,11 +66,16 @@ public class LabelViewHelper {
         distance = attributes.getDimensionPixelSize(R.styleable.LabelView_label_distance, dip2Px(DEFAULT_DISTANCE));
         height = attributes.getDimensionPixelSize(R.styleable.LabelView_label_height, dip2Px(DEFAULT_HEIGHT));
         text = attributes.getString(R.styleable.LabelView_label_text);
+        textFont = attributes.getString(R.styleable.LabelView_label_textFont);
         backgroundColor = attributes.getColor(R.styleable.LabelView_label_backgroundColor, DEFAULT_BACKGROUND_COLOR);
         textSize = attributes.getDimensionPixelSize(R.styleable.LabelView_label_textSize, dip2Px(DEFAULT_TEXT_SIZE));
         textColor = attributes.getColor(R.styleable.LabelView_label_textColor, DEFAULT_TEXT_COLOR);
         visual = attributes.getBoolean(R.styleable.LabelView_label_visual, true);
         orientation = attributes.getInteger(R.styleable.LabelView_label_orientation, DEFAULT_ORIENTATION);
+
+        hWeight = attributes.getFloat(R.styleable.LabelView_label_hWeight, DEFAULT_HWEIGHT);
+        vWeight = attributes.getFloat(R.styleable.LabelView_label_vWeight, DEFAULT_VWEIGHT);
+
         attributes.recycle();
 
         rectPaint = new Paint();
@@ -85,6 +102,10 @@ public class LabelViewHelper {
             return;
         }
 
+        if (orientation == RIGHT_TOP) {
+            distance = (int)(measuredWidth * hWeight);
+        }
+
         float actualDistance = distance + height / 2;
         calcOffset(actualDistance, measuredWidth, measuredHeight);
 
@@ -99,6 +120,14 @@ public class LabelViewHelper {
         rectPath.lineTo(endPosX, endPosY);
         canvas.drawPath(rectPath, rectPaint);
 
+        try {
+            Typeface tf = Typeface.createFromAsset(context.getAssets(), "fonts/" + (textFont != null ? textFont : DEFAULT_TEXT_FONT));
+            textPaint.setTypeface(tf);
+
+        } catch (Exception e) {
+
+        }
+
         textPaint.setTextSize(textSize);
         textPaint.setColor(textColor);
         textPaint.getTextBounds(text, 0, text.length(), textBound);
@@ -108,25 +137,27 @@ public class LabelViewHelper {
 
     private void calcOffset(float actualDistance, int measuredWidth, int measuredHeight) {
         switch (orientation) {
-            case 1:
+            case LEFT_TOP:
                 startPosX = 0;
                 startPosY = actualDistance;
                 endPosX = actualDistance;
                 endPosY = 0;
                 break;
-            case 2:
+            case RIGHT_TOP:
                 startPosX = measuredWidth - actualDistance;
-                startPosY = 0;
+//                startPosY = 0;
+                startPosY = - height / 2;
                 endPosX = measuredWidth;
-                endPosY = actualDistance;
+//                endPosY = actualDistance;
+                endPosY = measuredWidth * vWeight;
                 break;
-            case 3:
+            case LEFT_BOTTOM:
                 startPosX = 0;
                 startPosY = measuredHeight - actualDistance;
                 endPosX = actualDistance;
                 endPosY = measuredHeight;
                 break;
-            case 4:
+            case RIGHT_BOTTOM:
                 startPosX = measuredWidth - actualDistance;
                 startPosY = measuredHeight;
                 endPosX = measuredWidth;

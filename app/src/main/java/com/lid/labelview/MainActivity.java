@@ -17,7 +17,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+/*
         final LabelButtonView labelButtonView = (LabelButtonView)findViewById(R.id.labelbutton);
         labelButtonView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +64,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, RecyclerViewActivity.class));
             }
-        });
+        });*/
     }
+
 }

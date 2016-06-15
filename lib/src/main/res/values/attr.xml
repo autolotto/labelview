@@ -5,8 +5,11 @@
         <attr name="label_height" format="dimension"/>
         <attr name="label_backgroundColor" format="color"/>
         <attr name="label_text" format="string"/>
+        <attr name="label_textFont" format="string"/>
         <attr name="label_textSize" format="dimension" />
         <attr name="label_textColor" format="color"/>
+        <attr name="label_hWeight" format="float"/>
+        <attr name="label_vWeight" format="float"/>
         <attr name="label_visual" format="boolean"/>
         <attr name="label_orientation" format="enum">
             <enum name="LEFT_TOP" value="1"/>
